@@ -4,6 +4,7 @@ export default interface BoardListItem {
     content : string;
     boardTitleImage : string | null;
     favoriteCount : number;
+    commentCount : number;
     viewCount : number;
     writeDatetime : string;
     writerNickname : string;
