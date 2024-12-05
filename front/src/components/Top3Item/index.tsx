@@ -23,7 +23,7 @@ const onClickhandler = () => {
   // navigator(boardNum);
 }
 
-//---------- render  : BoardListItem----------//  
+//---------- render : BoardListItem---------- //  
   return (
     <div className='top3-list-item' style={{ backgroundImage: `url(${boardTitleImage})` }} onClick={onClickhandler}>
       <div className='top3-list-item-main-box'>
