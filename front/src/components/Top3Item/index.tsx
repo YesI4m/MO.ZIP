@@ -10,6 +10,7 @@ interface Props{
 
 //----------componet : BoardListItem----------//
 export default function Top3Item({ top3ListItem }: Props) {
+  
 //----------       properties       ----------//
   const { boardNum, title, content, boardTitleImage,
     favoriteCount, viewCount, commentCount,

@@ -1,4 +1,4 @@
-export default interface CommnetListItem {
+export default interface CommentListItem {
     nickname : string;
     profileImage : string | null;
     writeDatetime : string;
