@@ -6,13 +6,13 @@ import { FavoriteListItem } from 'types/interface'
 interface Props{
     favoriteListItem: FavoriteListItem;
 }
-//----------componet : FavoriteListItem----------//
+//          component: FavoriteListItem          //
 export default function FavoriteItem({ favoriteListItem }: Props) {
 
-    //----------       properties       ----------//
+//          state: properties                    //
     const { profileImage, nickname} = favoriteListItem;
 
-//---------- render : FavoriteListItem---------- //  
+//          render : FavoriteListItem            //
     return (
         <div className='favorite-list-item'>
             <div className='favorite-list-item-profile-box'>

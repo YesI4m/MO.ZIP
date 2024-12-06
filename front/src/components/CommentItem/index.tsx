@@ -7,13 +7,13 @@ interface Props {
     commentListItem: CommentListItem;
 }
 
-//----------componet : BoardListItem----------//
+//          component : BoardListItem                    //
 export default function CommentItem({ commentListItem }: Props) {
 
-//----------       properties       ----------//
+//          state : properties                    //
 const {nickname, profileImage, writeDatetime, content} = commentListItem
 
-//---------- render : BoardListItem---------- // 
+//          render : BoardListItem                    // 
   return (
     <div className='comment-list-item'>
         <div className='comment-list-item-top'>

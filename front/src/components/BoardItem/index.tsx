@@ -9,23 +9,23 @@ interface Props{
 }
 
 
-//----------componet : BoardListItem----------//
+//          component : BoardListItem                    //
 export default function BoardItem({ boardListItem }: Props) {
 
-//----------       properties       ----------//
+//          state : properties                    //
 const {boardNum, title, content, boardTitleImage,
     favoriteCount, viewCount, commentCount,
     writeDatetime, writerNickname, writerProfileImage} = boardListItem;
 
-//---------- function  :  navigate  ----------//
+//          function : navigate                    //
 // const navigator = useNavigate();
 
-//----------event handler: 게시물 아이템 클릭----------//
+//          event handler: 게시물 아이템 클릭          //
 const onClickhandler = () => {
     // navigator(boardNum);
 }
 
-//---------- render  : BoardListItem----------//
+//          render : BoardListItem                    //
   return (
     <div className='board-list-item' onClick={onClickhandler}>
         <div className='board-list-item-main-box'>
