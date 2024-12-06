@@ -1,42 +1,38 @@
 import React, { useState } from 'react';
 import './App.css';
-import BoardItem from 'components/BoardItem';
-import { commentListMock, favoriteListMock, latestBoardListMock, top3BoardListMock } from 'mocks';
-import Top3Item from 'components/Top3Item';
-import CommentItem from 'components/CommentItem';
-import FavoriteItem from 'components/FavoriteItem';
-import InputBox from 'components/InputBox';
-import Footer from 'layouts/Footer';
+import { Route, Routes } from 'react-router-dom';
+import Main from 'views/Main';
+import Authentication from 'views/Authentication';
+import Search from 'views/Search';
+import User from 'views/User';
+import BoardWrite from 'views/Board/Write';
+import BoardUpdate from 'views/Board/Update';
+import BoardDetail from 'views/Board/Detail';
+import Container from 'layouts/Container';
+import { AUTH_PATH, BOARD_DETAIL_PATH, BOARD_PATH, BOARD_UPDATE_PATH, BOARD_WRITE_PATH, MAIN_PATH, SEARCH_PATH, USER_PATH } from 'constant';
 
+
+//          component: App          //
 function App() {
 
+//          render: App             //
+
   return (
-    <>
-    {/* 보드리스트테스트 */}
-      {/* {latestBoardListMock.map(BoardListItem => <BoardItem boardListItem={BoardListItem} />)} */}
+    <Routes>
+      <Route element={<Container/>}>
+        <Route path={MAIN_PATH()} element={<Main />}/>
+        <Route path={AUTH_PATH()} element={<Authentication />}/>
+        <Route path={SEARCH_PATH('searchWord')} element={<Search />}/>
+        <Route path={USER_PATH('userEmail')} element={<User />}/>
+        <Route path={BOARD_PATH()}>
+          <Route path={BOARD_WRITE_PATH()} element={<BoardWrite />}/>
+          <Route path={BOARD_DETAIL_PATH(':boardNum')} element={<BoardDetail />}/>
+          <Route path={BOARD_UPDATE_PATH(':boardNum')} element={<BoardUpdate />}/>
+        </Route>
 
-
-    {/* 탑3테스트 */}
-      {/* <div style={{ display: 'flex' , justifyContent: 'center', gap: '25px'}}>
-        {top3BoardListMock.map(top3ListItem => <Top3Item top3ListItem={top3ListItem}/>)}
-      </div> */}
-
-      {/* 코멘트아이템테스트 */}
-      {/* <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: '30px'}}>
-        {commentListMock.map(commentListItem => <CommentItem commentListItem={commentListItem}/>)}
-      </div> */}
-
-      {/* favoriteListItem테스트 */}
-      {/* <div style={{ display: 'flex',columnGap:'30px', gap: '20px'}}>
-        {favoriteListMock.map(favoriteListItem => <FavoriteItem favoriteListItem={favoriteListItem}/>)}
-      </div> */}
-
-      {/* 인풋박스테스트 */}
-      {/* <InputBox lable='이메일' type='text' placeholder='이메일 주소를 입력해주세요' value={value} error={false} setValue={setValue} message='아린무닉' /> */}
-
-
-      <Footer/>
-    </>
+        <Route path='*' element={<h1>404 Not Found</h1>}/>
+      </Route>
+    </Routes>
   );
 }
 
