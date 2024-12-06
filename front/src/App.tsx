@@ -6,9 +6,9 @@ import Top3Item from 'components/Top3Item';
 import CommentItem from 'components/CommentItem';
 import FavoriteItem from 'components/FavoriteItem';
 import InputBox from 'components/InputBox';
+import Footer from 'layouts/Footer';
 
 function App() {
-  const [value, setValue] = useState('');
 
   return (
     <>
@@ -31,9 +31,11 @@ function App() {
         {favoriteListMock.map(favoriteListItem => <FavoriteItem favoriteListItem={favoriteListItem}/>)}
       </div> */}
 
-      
-      
-      <InputBox lable='이메일' type='text' placeholder='이메일 주소를 입력해주세요' value={value} error={false} setValue={setValue} message='아린무닉' />
+      {/* 인풋박스테스트 */}
+      {/* <InputBox lable='이메일' type='text' placeholder='이메일 주소를 입력해주세요' value={value} error={false} setValue={setValue} message='아린무닉' /> */}
+
+
+      <Footer/>
     </>
   );
 }
