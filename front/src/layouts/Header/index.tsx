@@ -1,10 +1,21 @@
 import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import './style.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MAIN_PATH, SEARCH_PATH } from 'constant';
+import { AUTH_PATH, MAIN_PATH, SEARCH_PATH, USER_PATH } from 'constant';
+import { useCookies } from 'react-cookie';
+import { useLoginUserStore } from 'stores';
 
 //           component: Header          //
 export default function Header() {
+
+//           state: 로그인 유저 상태         //
+const { loginUser, setLoginUser, resetLoginUser } = useLoginUserStore();
+
+//           state: cookie 상태         //
+const [cookies, setCookies] = useCookies();
+
+//           state: 로그인 상태         //
+const [isLogin, setLogin] = useState<boolean>(false);
 
 //          function: navigate          //
 const navigate = useNavigate();
@@ -77,6 +88,49 @@ const SearchButton = () => {
   )
 }
 
+//          component: login mypage logout 버튼          //
+  const LoginMyPageButton = () => {
+
+//          state: userEmail path variable 상태          //
+  const { userEmail } = useParams();
+
+//          event handler: 마이페이지 버튼 클릭          //
+  const onMyPageButtonClickHandler = () => {
+    if(!loginUser) return;
+    navigate(USER_PATH(''));
+  }
+
+//          event handler: 로그아웃 버튼 클릭          //
+  const onSignOutButtonClickHandler = () => {
+    if(!loginUser) return;
+    const{ email } = loginUser
+    navigate(USER_PATH(''));
+  }
+
+//          event handler: 로그인 버튼 클릭          //
+  const onSignInButtonClickHandler = () => {
+    navigate(MAIN_PATH());
+  }
+
+//           render: mypage          //
+  if(isLogin && userEmail === loginUser?.email)
+    return(
+      <div className='white-button' onClick={onSignOutButtonClickHandler}>{'로그아웃'}</div>
+    )
+
+//           render: mypage          //
+  if(isLogin)
+     return(
+      <div className='white-button' onClick={onMyPageButtonClickHandler}>{'마이페이지'}</div>
+     )
+
+//           render: login          //
+     return(
+      <div className='black-button' onClick={onSignInButtonClickHandler}>{'로그인'}</div>
+     )
+  }
+
+
 //           render: Header          //
   return (
     <div id='header'>
@@ -89,6 +143,7 @@ const SearchButton = () => {
         </div>
         <div className='header-right-box'>
           <SearchButton/>
+          <LoginMyPageButton/>
         </div>
       </div>
     </div>
