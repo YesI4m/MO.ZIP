@@ -36,7 +36,7 @@ public class WebSecurityConfig {
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
             .cors(cors -> cors
-                .configurationSource(CorsConfigurationSource())
+                .configurationSource(corsConfigurationSource())
             )
             .csrf(CsrfConfigurer::disable)
             .httpBasic(HttpBasicConfigurer::disable)
@@ -44,33 +44,34 @@ public class WebSecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/","/api/v1/auth/**", "/api/v1/search/**","/file/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/board/**", "/api/v1/user/*").permitAll()
-                .anyRequest().authenticated()
+            .requestMatchers("/", "/api/v1/auth/**", "/api/v1/search/**", "/file/**").permitAll() 
+            .requestMatchers(HttpMethod.GET, "/api/v1/board/**", "/api/v1/user/*").permitAll()
+            .anyRequest().authenticated()
             )
+            
+            
             .exceptionHandling(exceptionHandling -> exceptionHandling
-                .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
+            .authenticationEntryPoint(new FailedAuthenticationEntryPoint())
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+            
         return httpSecurity.build();
 
     }
 
     @Bean
-    protected CorsConfigurationSource CorsConfigurationSource(){
-
+    protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("*");
         configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-
+        configuration.addExposedHeader("*");
+    
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
+    
         return source;
-
     }
+    
 
     class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint{
 
