@@ -1,9 +1,9 @@
 import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import './style.css';
-import { useNavigate, useParams } from 'react-router-dom';
-import { AUTH_PATH, MAIN_PATH, SEARCH_PATH, USER_PATH } from 'constant';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { AUTH_PATH, BOARD_DETAIL_PATH, BOARD_PATH, BOARD_UPDATE_PATH, BOARD_WRITE_PATH, MAIN_PATH, SEARCH_PATH, USER_PATH } from 'constant';
 import { useCookies } from 'react-cookie';
-import { useLoginUserStore } from 'stores';
+import { useBoardStore, useLoginUserStore } from 'stores';
 
 //           component: Header          //
 export default function Header() {
@@ -11,11 +11,31 @@ export default function Header() {
 //           state: 로그인 유저 상태         //
 const { loginUser, setLoginUser, resetLoginUser } = useLoginUserStore();
 
+//           state: path 상태          //
+const { pathname } = useLocation();
+
+//           state: 인증 페이지 상태          //
+const [isAuthPage, setIsAuthPage] = useState<boolean>(false);
+//           state: 메인 페이지 상태          //
+const [isMainPage, setIsMainPage] = useState<boolean>(false);
+//           state: 검색 페이지 상태          //
+const [isSearchPage, setIsSearchPage] = useState<boolean>(false);
+//           state: 게시물 상세 페이지 상태          //
+const [isBoardDetailPage, setIsBoardDetailPage] = useState<boolean>(false);
+//           state: 게시물 작성 페이지 상태          //
+const [isBoardWritePage, setIsBoardWritePage] = useState<boolean>(false);
+//           state: 게시물 수정 페이지 상태          //
+const [isBoardUpdatePage, setIsBoardUpdatePage] = useState<boolean>(false);
+//           state: 유저 페이지 상태          //
+const [isUserPage, setIsUserPage] = useState<boolean>(false);
+
+
 //           state: cookie 상태         //
 const [cookies, setCookies] = useCookies();
 
 //           state: 로그인 상태         //
 const [isLogin, setLogin] = useState<boolean>(false);
+
 
 //          function: navigate          //
 const navigate = useNavigate();
@@ -131,6 +151,47 @@ const SearchButton = () => {
   }
 
 
+//          component: upload 버튼           //
+  const UploadButton = () => {
+
+//          state: 게시물 상태           //
+    const { title, content, boardImageFileList, resetBoard } = useBoardStore();
+
+//           event handler: 업로드 버튼 클릭 이벤트          //
+    const onUploadButtonClickHandler = () => {
+
+    }
+
+//          render: 업로드 버튼              //
+    if (title && content)
+      return(
+        <div className='black-button' onClick={onUploadButtonClickHandler}>{'업로드'}</div>
+      )
+
+//          render: 업로드 불가  버튼          //
+    return(
+      <div className='disable-button'>{'업로드 불가'}</div>
+    )
+  }
+
+//          effect: path가 변결될 때 실행          //
+  useEffect(() => {
+    const isAuthPage = pathname.startsWith(AUTH_PATH());
+    setIsAuthPage(isAuthPage);
+    const isMainPage = pathname === MAIN_PATH();
+    setIsMainPage(isMainPage);
+    const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
+    setIsSearchPage(isSearchPage);
+    const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
+    setIsBoardDetailPage(isBoardDetailPage);
+    const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' +BOARD_WRITE_PATH());
+    setIsBoardWritePage(isBoardWritePage);
+    const isBoardUpdatePage = pathname.startsWith(BOARD_PATH() + '/' +BOARD_UPDATE_PATH(''));
+    setIsBoardUpdatePage(isBoardUpdatePage);
+    const isUserPage = pathname.startsWith(USER_PATH(''));
+    setIsUserPage(isUserPage);
+  }, [pathname])
+
 //           render: Header          //
   return (
     <div id='header'>
@@ -142,8 +203,9 @@ const SearchButton = () => {
           <div className='header-logo'>{'여기는 뭐가들어갈까요'}</div>
         </div>
         <div className='header-right-box'>
-          <SearchButton/>
-          <LoginMyPageButton/>
+          {(isAuthPage || isMainPage || isSearchPage || isBoardDetailPage) && <SearchButton/>}
+          {(isMainPage || isSearchPage || isBoardDetailPage || isUserPage) && <LoginMyPageButton/>}
+          {(isBoardWritePage|| isBoardUpdatePage) && <UploadButton/>}
         </div>
       </div>
     </div>
