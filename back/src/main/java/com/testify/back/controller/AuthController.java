@@ -15,7 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/app/v1/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     
@@ -26,6 +26,7 @@ public class AuthController {
         @RequestBody @Valid SignUpRequestDto requestBody
     ){
         ResponseEntity<? super SignUpResponseDto> response = authService.signUp(requestBody);
+        
         return response;
     }
 

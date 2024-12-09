@@ -16,6 +16,7 @@ public class UserEntity {
 
     @Id
     private String email;
+    private String password;
     private String nickname;
     private String telNum;
     private String address;
@@ -25,6 +26,7 @@ public class UserEntity {
 
     public UserEntity(SignUpRequestDto dto){
         this.email = dto.getEmail();
+        this.password = dto.getPassword();
         this.nickname = dto.getNickname();
         this.telNum = dto.getTelNum();
         this.address = dto.getAddress();
