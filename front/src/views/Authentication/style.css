@@ -105,6 +105,14 @@
     line-height: 140%;
 }
 
+.auth-card-page{
+    color: rgba(0, 0, 0, 0.7);
+
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 140%;
+}
+
 .auth-card-bottom{
     display: flex;
     flex-direction: column;
@@ -130,7 +138,6 @@
     justify-content: center;
 }
 
-
 .auth-description{
     color: rgba(0, 0, 0, 0.7);
 
@@ -139,9 +146,9 @@
     line-height: 140%;
 }
 
-
 .auth-description-link{
     color: rgba(0, 0, 0, 1);
     cursor: pointer;
     font-weight: 500;
 }
+
