@@ -59,18 +59,20 @@ public class WebSecurityConfig {
 
     }
 
-    @Bean
-    protected CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
-        configuration.addExposedHeader("*");
-    
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-    
-        return source;
-    }
+@Bean
+protected CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.addAllowedOrigin("http://localhost:3000"); 
+    configuration.addAllowedMethod("*");
+    configuration.addAllowedHeader("*"); 
+    configuration.setAllowCredentials(true); 
+    configuration.addExposedHeader("*");
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+}
+
     
 
     class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint{

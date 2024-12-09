@@ -1,4 +1,4 @@
-import{ ChangeEvent, Dispatch, KeyboardEvent, SetStateAction, forwardRef } from 'react'
+import{ ChangeEvent, KeyboardEvent, forwardRef } from 'react'
 import './style.css';
 
 //          interface : properties                    //
@@ -7,7 +7,7 @@ interface Props {
     type: 'text' | 'password';
     placeholder: string;
     value : string;
-    setValue: Dispatch<SetStateAction<string>>;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
     error: boolean;
 
     icon?: 'eye-light-off-icon' | 'eye-light-on-icon' | 'expend-right-light-icon';
@@ -22,13 +22,8 @@ const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
 
 //          state : properties                    //
     const{ lable, type, placeholder, value, error, icon, message } = props;
-    const{ setValue, onButtonClick, onKeyDown } = props;
+    const{ onChange, onButtonClick, onKeyDown } = props;
 
-//          event handler: input 값 변경                    //
-    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        setValue(value);
-    }
 //          event handler: input 키 이벤트 처리                    //
     const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
         if(!onKeyDown) return;
@@ -41,7 +36,7 @@ const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
         <div className='inputbox'>
             <div className='inputbox-label'>{ lable }</div>
             <div className={ error ? 'inputbox-container-error' : 'inputbox-container' }>
-                <input ref={ ref } type={ type } className='input' placeholder={ placeholder } value={ value } onChange={ onChangeHandler } onKeyDown={ onKeyDownHandler }/>
+                <input ref={ ref } type={ type } className='input' placeholder={ placeholder } value={ value } onChange={ onChange } onKeyDown={ onKeyDownHandler }/>
                 {onButtonClick !== undefined && (
                 <div className='icon-button' onClick={onButtonClick}>
                     {icon !== undefined && (

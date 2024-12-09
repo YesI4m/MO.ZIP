@@ -1,12 +1,25 @@
-import React, { KeyboardEvent, useRef, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
 import './style.css'
 import InputBox from 'components/InputBox';
+import { signInRequest } from 'apis';
+import { SignInRequestDto } from 'apis/request/auth';
+import { SignInResponseDto } from 'apis/response/auth';
+import { ResponseDto } from 'apis/response';
+import { useCookies } from 'react-cookie';
+import { MAIN_PATH } from 'constant';
+import { useNavigate } from 'react-router-dom';
 
 //          component: Authentication          //
 export default function Authentication() {
   
 //          state: 화면 상태         //
 const [view, setView] = useState<'sign-in' | 'sign-up'>('sign-in');
+
+//          function: navigate          //
+const navigator = useNavigate();
+
+//          state: cookie 상태         //
+const [cookies, setCookie] = useCookies();
 
 //          component: signincard          //
 const SignInCard = () => {
@@ -28,10 +41,43 @@ const SignInCard = () => {
 //          state: error 상태         //
   const [error, setError] = useState<boolean>(false);
 
+//          function: sign in response 처리 함수          //
+  const signInResponse = (responseBody: SignInResponseDto | ResponseDto | null) => {
+    if(!responseBody){
+      alert('네트워크 이상입니다.');
+      return;
+    }
+    const { code } = responseBody;
+    if (code === 'DBE') alert('데이터베이스 오류입니다');
+    if (code === 'VF' || code === 'SF') setError(true);
+    if (code !== 'SU') return;
+    const { token, expirationTime } = responseBody as SignInResponseDto;
+    const now = new Date().getTime();
+    const expires = new Date(now + expirationTime * 1000);
+
+    setCookie('accessToken', token, { expires, path: MAIN_PATH() });
+    navigator(MAIN_PATH());
+    
+  }
+
+//          event handler: email 변경 change         //
+  const onEmailChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
+    setError(false);
+    const { value } = event.target;
+    setEmail(value);
+  }
+
+//          event handler: password 변경 change         //
+const onPasswordChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
+  setError(false);
+  const { value } = event.target;
+  setPassword(value);
+}
 
 //          event handler: login button click         //
   const onSignInButtonClickHandler = () => {
-
+    const requestBody: SignInRequestDto = { email,password };
+    signInRequest(requestBody).then(signInResponse);
   }
 
 //          event handler: 회원가입 링크 click         //
@@ -71,8 +117,8 @@ const onPasswordButtonClickHandler = () => {
             <div className='auth-card-title-box'>
               <div className='auth-card-title'>{'로그인'}</div>
             </div>
-            <InputBox ref={emailRef} lable='이메일 주소' type='text' placeholder='이메일 주소를 입력해 주세요.' error={error}value={email} setValue={setEmail} onKeyDown={onEmailKeyDownHandler} />
-            <InputBox ref={passwordRef} lable='패스워드' type={passwordType} placeholder='비밀번호를 입력해 주세요.' error={error}  value={password} setValue={setPassword} icon={passwordButtonIcon} onButtonClick={onPasswordButtonClickHandler} onKeyDown={onPasswordKeyDownHandler} />
+            <InputBox ref={emailRef} lable='이메일 주소' type='text' placeholder='이메일 주소를 입력해 주세요.' error={error}value={email} onChange={onEmailChangeHandler} onKeyDown={onEmailKeyDownHandler} />
+            <InputBox ref={passwordRef} lable='패스워드' type={passwordType} placeholder='비밀번호를 입력해 주세요.' error={error}  value={password} onChange={onPasswordChangeHandler} icon={passwordButtonIcon} onButtonClick={onPasswordButtonClickHandler} onKeyDown={onPasswordKeyDownHandler} />
             
           </div>
           <div className='auth-card-bottom'>
