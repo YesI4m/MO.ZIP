@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.testify.back.dto.request.auth.SignInRequestDto;
 import com.testify.back.dto.request.auth.SignUpRequestDto;
+import com.testify.back.dto.response.auth.SignInResponseDto;
 import com.testify.back.dto.response.auth.SignUpResponseDto;
 import com.testify.back.service.AuthService;
 
@@ -27,6 +29,14 @@ public class AuthController {
     ){
         ResponseEntity<? super SignUpResponseDto> response = authService.signUp(requestBody);
         
+        return response;
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<? super SignInResponseDto> signIn(
+        @RequestBody @Valid SignInRequestDto requestBody
+    ){
+        ResponseEntity<? super SignInResponseDto> response = authService.signIn(requestBody);
         return response;
     }
 
