@@ -114,22 +114,22 @@ const SearchButton = () => {
 //          state: userEmail path variable 상태          //
   const { userEmail } = useParams();
 
-//          event handler: 마이페이지 버튼 클릭          //
+  //          event handler: 마이페이지 버튼 클릭          //
   const onMyPageButtonClickHandler = () => {
     if(!loginUser) return;
-    navigate(USER_PATH(''));
+    const{ email } = loginUser
+    navigate(USER_PATH(email));
   }
 
-//          event handler: 로그아웃 버튼 클릭          //
+  //          event handler: 로그아웃 버튼 클릭          //
   const onSignOutButtonClickHandler = () => {
     if(!loginUser) return;
-    const{ email } = loginUser
-    navigate(USER_PATH(''));
+    navigate(MAIN_PATH());
   }
 
 //          event handler: 로그인 버튼 클릭          //
   const onSignInButtonClickHandler = () => {
-    navigate(MAIN_PATH());
+    navigate(AUTH_PATH());
   }
 
 //           render: mypage          //
