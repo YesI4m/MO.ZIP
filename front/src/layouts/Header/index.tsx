@@ -123,7 +123,8 @@ const SearchButton = () => {
 
   //          event handler: 로그아웃 버튼 클릭          //
   const onSignOutButtonClickHandler = () => {
-    if(!loginUser) return;
+    resetLoginUser();
+    setCookies('accessToken', '', { path: MAIN_PATH(),expires: new Date() })
     navigate(MAIN_PATH());
   }
 
@@ -132,7 +133,7 @@ const SearchButton = () => {
     navigate(AUTH_PATH());
   }
 
-//           render: mypage          //
+//           render: logout          //
   if(isLogin && userEmail === loginUser?.email)
     return(
       <div className='white-button' onClick={onSignOutButtonClickHandler}>{'로그아웃'}</div>
@@ -174,7 +175,8 @@ const SearchButton = () => {
     )
   }
 
-//          effect: path가 변결될 때 실행          //
+
+//          effect: path가 변경될 때 실행          //
   useEffect(() => {
     const isAuthPage = pathname.startsWith(AUTH_PATH());
     setIsAuthPage(isAuthPage);
@@ -191,6 +193,12 @@ const SearchButton = () => {
     const isUserPage = pathname.startsWith(USER_PATH(''));
     setIsUserPage(isUserPage);
   }, [pathname])
+
+//          effect: login user가 변경될 때 실행          //
+useEffect(()=> {
+  setLogin(loginUser !== null);
+}, [loginUser]);
+
 
 //           render: Header          //
   return (
