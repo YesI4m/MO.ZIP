@@ -1,9 +1,9 @@
 import React, { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
 import './style.css'
 import InputBox from 'components/InputBox';
-import { signInRequest } from 'apis';
-import { SignInRequestDto } from 'apis/request/auth';
-import { SignInResponseDto } from 'apis/response/auth';
+import { signInRequest, SignUpRequest } from 'apis';
+import { SignInRequestDto, SignUpRequestDto } from 'apis/request/auth';
+import { SignInResponseDto, SignUpResponseDto } from 'apis/response/auth';
 import { ResponseDto } from 'apis/response';
 import { useCookies } from 'react-cookie';
 import { MAIN_PATH } from 'constant';
@@ -165,7 +165,7 @@ const onPasswordButtonClickHandler = () => {
   const [passwordCheckType, setPasswordCheckType] = useState<'text' | 'password'>('password');
 
 //          state: 페이지 번호 상태          //
-  const [page,setPage] = useState<1|2>(2);
+  const [page,setPage] = useState<1|2>(1);
 //          state: 이메일 상태          //
   const [email, setEmail] = useState<string>('');
 //          state: password 상태          //
@@ -219,6 +219,41 @@ const [passwordCheckButtonIcon, setPasswordCheckButtonIcon] = useState<'eye-ligh
 //          function: 다음 주소 검색 팝업 오픈           //
 const open = useDaumPostcodePopup();
 
+//          function: sing up response 처리           //
+const signUpResponse = (responseBody: SignUpResponseDto | ResponseDto | null) => {
+  if(!responseBody){
+    alert('네트워크 이상입니다.');
+    return;
+  }
+  const { code } = responseBody;
+  if (code == 'DE'){
+    setPage(1);
+    setEmailError(true);
+    setEmailErrorMessage('중복되는 이메일 주소입니다.');
+  }
+  if (code == 'DN'){
+    setNicknameError(true);
+    setNicknameErrorMessage('중복되는 닉네임입니다.');
+  }
+  if (code == 'DT'){
+    setTelNumError(true);
+    setTelNumErrorMessage('중복되는 핸드폰 번호입니다.');
+  }
+  if (code  == 'VF'){
+    alert('모든 값을 입력하세요.');
+  }
+  if (code == 'DBE'){
+    alert('데이터베이스 오류입니다.');
+  }
+  if (code !== 'SU'){
+    return;
+  }
+
+  setView('sign-in');
+  
+}
+
+
 //          event handler: 이메일 변경 이벤트           //
   const onEmailChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
     const {value} = event.target;
@@ -246,9 +281,9 @@ const open = useDaumPostcodePopup();
 //          event handler: nickname 변경 이벤트           //
 const onNicknameChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
   const {value} = event.target;
-  setPassword(value);
-  setPasswordError(false);
-  setPasswordErrorMessage('');
+  setNickname(value);
+  setNicknameError(false);
+  setNicknameErrorMessage('');
 }
 //          event handler: telNum 변경 이벤트           //
 const onTelNumChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
@@ -306,9 +341,9 @@ const onPasswordCheckButtonClickHandler = () => {
 
 //          event handler: 다음단계 버튼 클릭            //
   const onNextButtonClickHandler = () => {
-    const emailPattern = /^$[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/;
-    const isEmaiilPattern = emailPattern.test(email);
-    if(!isEmaiilPattern){
+    const emailPattern = /^[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/;
+    const isEmailPattern = emailPattern.test(email);
+    if(!isEmailPattern){
       setEmailError(true);
       setEmailErrorMessage('이메일 주소 포멧이 맞지 않습니다.')
     }
@@ -322,13 +357,59 @@ const onPasswordCheckButtonClickHandler = () => {
       setPasswordCheckError(true);
       setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.')
     }
-    if(!isEmaiilPattern || !isCheckedPassword || !isEqualPassword) return;
+    if(!isEmailPattern || !isCheckedPassword || !isEqualPassword) return;
     setPage(2);
+
   }
 
 //          event handler: 회원가입 버튼 클릭 이벤트            //
 const onSignUpButtonClickHandler = () => {
-  alert('회원가입버튼')
+  const emailPattern = /^[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/;
+  const isEmailPattern = emailPattern.test(email);
+  if(!isEmailPattern){
+    setEmailError(true);
+    setEmailErrorMessage('이메일 주소 포멧이 맞지 않습니다.')
+  }
+  const isCheckedPassword = password.trim().length >= 8
+  if(!isCheckedPassword){
+    setPasswordError(true);
+    setPasswordErrorMessage('비밀번호를 8자 이상 입력해주세요.')
+  }
+  const isEqualPassword = password === passwordCheck;
+  if(!isEqualPassword){
+    setPasswordCheckError(true);
+    setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.')
+  }
+  if(!isEmailPattern || !isCheckedPassword || !isEqualPassword){
+    setPage(1);
+    return;
+  }
+  const hasNickName = nickname.trim().length !== 0;
+  if(!hasNickName){
+    setNicknameError(true);
+    setNicknameErrorMessage('닉네임을 입력해주세요.');
+  }
+  const telNumPattern = /^[0-9]{11,13}$/;
+  const isTelNumPattern = telNumPattern.test(telNum);
+  if(!isTelNumPattern){
+    setTelNumError(true);
+    setTelNumErrorMessage('숫자만 입력해주세요.');
+  }
+  const hasAddress = address.trim().length > 0;
+  if(!hasAddress){
+    setAddressError(true);
+    setAddressErrorMessage('주소를 선택해주세요.');
+  }
+  if(!agreedPersonal){
+    setAgreedPersonalError(true);
+  }
+  if(!hasNickName || !isTelNumPattern || !agreedPersonal) return;
+
+  const requestBody: SignUpRequestDto = {
+    email, password, nickname, telNum, address, addressDetail, agreedPersonal
+  }
+
+  SignUpRequest(requestBody).then(signUpResponse);
 }
 //          event handler: 로그인 링크 클릭 이벤트            //
   const onSignInLinkClickHandler = () =>{
@@ -351,9 +432,7 @@ const onSignUpButtonClickHandler = () => {
 //          event handler: passwordcheck 체크 키 다운 이벤트            //
   const onPasswordCheckKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
     if(event.key !== 'Enter') return;
-    if(!nicknameRef.current) return;
     onNextButtonClickHandler();
-    nicknameRef.current.focus();
   }
 //          event handler: nickname 키 다운 이벤트            //
 const onNicknameKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -376,6 +455,8 @@ const onAddressKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
 //          event handler: addressDetail 키 다운 이벤트            //
 const onAddressDetailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
   if(event.key !== 'Enter') return;
+  if(!nicknameRef.current) return;
+  nicknameRef.current.focus();
   onSignUpButtonClickHandler();
 }
 
@@ -430,7 +511,7 @@ const onComplete = (data:Address) => {
                 <div className='black-large-full-button'onClick={onSignUpButtonClickHandler}>{'회원가입'}</div>
               </>
             )}
-            <div className='auth-descripton-box'>
+            <div className='auth-description-box'>
               <div className='auth-description'>{'이미 계정이 있으신가요?'}<span className='auth-description-link' onClick={onSignInLinkClickHandler}>{'로그인'}</span></div>
             </div>
           </div>
