@@ -8,6 +8,7 @@ import { ResponseDto } from 'apis/response';
 import { useCookies } from 'react-cookie';
 import { MAIN_PATH } from 'constant';
 import { useNavigate } from 'react-router-dom';
+import { Address, useDaumPostcodePopup } from 'react-daum-postcode';
 
 //          component: Authentication          //
 export default function Authentication() {
@@ -130,7 +131,9 @@ const onPasswordButtonClickHandler = () => {
             </div>
             }
             <div className='black-large-full-button' onClick={onSignInButtonClickHandler}>{'로그인'}</div>
+            <div className='auth-description-box'>
             <div className='auth-description'>{'신규 사용자이신가요? '}<span className='auth-description-link' onClick={onSignUpLinkClickHandler}>{'회원가입'}</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -177,6 +180,8 @@ const [telNum, setTelNum] = useState<string>('');
 const [address, setAddress] = useState<string>('');
 //          state: addressDetail 상태          //
 const [addressDetail, setAddressDetail] = useState<string>('');
+//          state: agreedPersonal 상태          //
+const [agreedPersonal, setAgreedPersonal] = useState<boolean>(false);
 
 //          state: email 에러 상태          //
   const [isEmailError, setEmailError] = useState<boolean>(false);
@@ -190,6 +195,8 @@ const [isNicknameError, setNicknameError] = useState<boolean>(false);
 const [isTelNumError, setTelNumError] = useState<boolean>(false);
 //          state: address 에러 상태          //
 const [isAddressError, setAddressError] = useState<boolean>(false);
+//          state: consent 에러 상태          //
+const [isAgreedPersonalError, setAgreedPersonalError] = useState<boolean>(false);
 
 //          state: email 에러 메세지 상태          //
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
@@ -204,44 +211,58 @@ const [telNumErrorMessage, setTelNumErrorMessage] = useState<string>('');
 //          state: address 에러 메세지 상태          //
 const [addressErrorMessage, setAddressErrorMessage] = useState<string>('');
 
- //          state: 패스워드 버튼 아이콘 상태          //
-  const [passwordButtonIcon, setPasswordButtonIcon] = useState<'eye-light-off-icon' | 'eye-light-on-icon' >('eye-light-off-icon');
+//          state: 패스워드 버튼 아이콘 상태          //
+const [passwordButtonIcon, setPasswordButtonIcon] = useState<'eye-light-off-icon' | 'eye-light-on-icon' >('eye-light-off-icon');
+//          state: 패스워드 체크 버튼 아이콘 상태          //
+const [passwordCheckButtonIcon, setPasswordCheckButtonIcon] = useState<'eye-light-off-icon' | 'eye-light-on-icon' >('eye-light-off-icon');
 
- //          state: 패스워드 체크 버튼 아이콘 상태          //
-  const [passwordCheckButtonIcon, setPasswordCheckButtonIcon] = useState<'eye-light-off-icon' | 'eye-light-on-icon' >('eye-light-off-icon');
+//          function: 다음 주소 검색 팝업 오픈           //
+const open = useDaumPostcodePopup();
 
 //          event handler: 이메일 변경 이벤트           //
   const onEmailChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
     const {value} = event.target;
     setEmail(value);
+    setEmailError(false);
+    setEmailErrorMessage('');
   }
 
 //          event handler: 패스워드 변경 이벤트           //
   const onPasswordChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
     const {value} = event.target;
     setPassword(value);
+    setPasswordError(false);
+    setPasswordErrorMessage('');
   }
 
 //          event handler: 패스워드 변경 이벤트           //
   const onPasswordCheckChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
   const {value} = event.target;
   setPasswordCheck(value);
+  setPasswordCheckError(false);
+  setPasswordCheckErrorMessage('');
 }
 
 //          event handler: nickname 변경 이벤트           //
 const onNicknameChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
   const {value} = event.target;
   setPassword(value);
+  setPasswordError(false);
+  setPasswordErrorMessage('');
 }
 //          event handler: telNum 변경 이벤트           //
 const onTelNumChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
   const {value} = event.target;
   setTelNum(value);
+  setTelNumError(false);
+  setTelNumErrorMessage('');
 }
 //          event handler: address 변경 이벤트           //
 const onAddressChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
   const {value} = event.target;
   setAddress(value);
+  setAddressError(false);
+  setAddressErrorMessage('');
 }
 //          event handler: addressDetail 변경 이벤트           //
 const onAddressDetailChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
@@ -260,6 +281,13 @@ const onAddressDetailChangeHandler = (event: ChangeEvent<HTMLInputElement>) =>{
     }
   }
 
+
+//          event handler: 개인정보 동의 버튼 클릭              //
+const onAgreedPersonalClickHandler = () => {
+  setAgreedPersonal(!agreedPersonal);
+  setAgreedPersonalError(false);
+}
+
 //          event handler: 패스워드 버튼 클릭              //
 const onPasswordCheckButtonClickHandler = () => {
   if(passwordCheckButtonIcon==='eye-light-off-icon'){
@@ -273,7 +301,7 @@ const onPasswordCheckButtonClickHandler = () => {
 
 //          event handler: 주소 버튼 클릭              //
   const onAddressButtonClickHandler = () => {
-
+    open({ onComplete });
   }
 
 //          event handler: 다음단계 버튼 클릭            //
@@ -300,9 +328,8 @@ const onPasswordCheckButtonClickHandler = () => {
 
 //          event handler: 회원가입 버튼 클릭 이벤트            //
 const onSignUpButtonClickHandler = () => {
-
+  alert('회원가입버튼')
 }
-
 //          event handler: 로그인 링크 클릭 이벤트            //
   const onSignInLinkClickHandler = () =>{
     setView('sign-in')
@@ -324,28 +351,40 @@ const onSignUpButtonClickHandler = () => {
 //          event handler: passwordcheck 체크 키 다운 이벤트            //
   const onPasswordCheckKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
     if(event.key !== 'Enter') return;
-    if(!passwordRef.current) return;
+    if(!nicknameRef.current) return;
     onNextButtonClickHandler();
+    nicknameRef.current.focus();
   }
 //          event handler: nickname 키 다운 이벤트            //
 const onNicknameKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
   if(event.key !== 'Enter') return;
-
+  if(!telNumRef.current) return;
+    onNextButtonClickHandler();
+    telNumRef.current.focus();
 }
 //          event handler: telNum 키 다운 이벤트            //
 const onTelNumKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
   if(event.key !== 'Enter') return;
-
+  onAddressButtonClickHandler();
 }
 //          event handler: address 키 다운 이벤트            //
 const onAddressKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
   if(event.key !== 'Enter') return;
-
+  if(!addressDetailRef.current) return;
+  addressDetailRef.current.focus();
 }
 //          event handler: addressDetail 키 다운 이벤트            //
 const onAddressDetailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
   if(event.key !== 'Enter') return;
+  onSignUpButtonClickHandler();
+}
 
+//          event handler: 다음 주소 검색 완료 이벤트            //
+const onComplete = (data:Address) => {
+  const { address } = data;
+  setAddress(address);
+  if (!addressDetailRef.current) return;
+  addressDetailRef.current.focus();
 }
 
 //          render: signupcard            //
@@ -370,8 +409,8 @@ const onAddressDetailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) =
               <InputBox ref={nicknameRef} lable='닉네임*' type='text' placeholder='닉네임을 입력해주세요.' value={nickname} onChange={onNicknameChangeHandler} error={isNicknameError} message={nicknameErrorMessage} onKeyDown={onNicknameKeyDownHandler}/>
               <InputBox ref={telNumRef} lable='핸드폰 번호*' type='text'
               placeholder='핸드폰 번호를 입력해 주세요.' value={telNum} onChange={onTelNumChangeHandler} error={isTelNumError} message={telNumErrorMessage} onKeyDown={onTelNumKeyDownHandler}/>
-              <InputBox ref={addressRef} lable='주소' type='text' placeholder='우편번호 찾기' value={address} onChange={onAddressChangeHandler} error={isAddressError} message={addressErrorMessage} onButtonClick={onAddressButtonClickHandler} onKeyDown={onAddressKeyDownHandler}/>
-              <InputBox ref={addressDetailRef} lable='상세주소' type='text' placeholder='상세주소를 입력해주세요.' value={addressDetail} onChange={onAddressDetailChangeHandler} error={false} onKeyDown={onAddressDetailKeyDownHandler}/>
+              <InputBox ref={addressRef} lable='주소' type='text' placeholder='우편번호 찾기' value={address} onChange={onAddressChangeHandler} error={isAddressError} message={addressErrorMessage} onButtonClick={onAddressButtonClickHandler} icon='expand-right-light-icon' onKeyDown={onAddressKeyDownHandler}/>
+              <InputBox ref={addressDetailRef} lable='상세주소' type='text' placeholder='상세주소를 입력해주세요.' value={addressDetail} onChange={onAddressDetailChangeHandler} error={false}  onKeyDown={onAddressDetailKeyDownHandler}/>
               </>
             )}
           </div>
@@ -382,16 +421,18 @@ const onAddressDetailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) =
             {page === 2 && (
               <>
                 <div className='auth-consent-box'>
-                  <div className='auth-check-box'>
-                    <div className='check-ring-light-icon'></div>
+                  <div className='auth-check-box' onClick={onAgreedPersonalClickHandler}>
+                  <div className={`icon ${agreedPersonal ? 'check-round-fill-icon' : 'check-ring-light-icon'}`}></div>
                   </div>
-                  <div className='auth-consect-title'>{'개인정보동의'}</div>
+                  <div className={isAgreedPersonalError ? 'auth-consent-title-error' : 'auth-consent-title' }>{'개인정보동의'}</div>
                   <div className='auth-consent-link'>{'더보기 >'}</div>
                 </div>
                 <div className='black-large-full-button'onClick={onSignUpButtonClickHandler}>{'회원가입'}</div>
               </>
             )}
-          <div className='auth-description'>{'이미 계정이 있으신가요?'}<span className='auth-description-link' onClick={onSignInLinkClickHandler}>{'로그인'}</span></div>
+            <div className='auth-descripton-box'>
+              <div className='auth-description'>{'이미 계정이 있으신가요?'}<span className='auth-description-link' onClick={onSignInLinkClickHandler}>{'로그인'}</span></div>
+            </div>
           </div>
         </div>
       </div>
