@@ -83,7 +83,7 @@ protected CorsConfigurationSource corsConfigurationSource() {
 
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{ \"code\": \"AF\", \"message\" : \"Authorization11 Failed\"}");
+            response.getWriter().write("{ \"code\": \"AF\", \"message\" : \"Authorization Failed\"}");
         }
         
     }
