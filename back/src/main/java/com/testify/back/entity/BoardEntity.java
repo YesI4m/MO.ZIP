@@ -27,10 +27,10 @@ public class BoardEntity {
     private String title;
     private String content;
     private String datetime;
-    private int like_count;
-    private int comment_count;
-    private int view_count;
-    private String writer_email;
+    private int likeCount;
+    private int commentCount;
+    private int viewCount;
+    private String writerEmail;
 
     public BoardEntity(PostBoardRequestDto dto, String email){
 
@@ -41,9 +41,13 @@ public class BoardEntity {
         this.title = dto.getTitle();
         this.content = dto.getContent();
         this.datetime = writeDatetime;
-        this.like_count = 0;
-        this.comment_count = 0;
-        this.view_count = 0;
-        this.writer_email = email;
+        this.likeCount = 0;
+        this.commentCount = 0;
+        this.viewCount = 0;
+        this.writerEmail = email;
+    }
+
+    public void increaseViewCount(){
+        this.viewCount++;
     }
 }

@@ -45,18 +45,18 @@ DELETE FROM board WHERE board_num = 1;
 
 -- 게시물 보기(클릭시)
 SELECT 
-    B.board_num AS board_num,
+    B.board_num AS boardNum,
     B.title AS title,
     B.content AS content,
-    B.datetime AS datetime,
-    B.like_count AS like_count,
-    B.comment_count AS comment_count,
-    B.view_count AS view_count,
-    B.writer_email AS writer_email,
-    U.nickname AS nickname,
-    U.profile_image AS profile_image
+    B.datetime AS writeDatetime,
+    B.like_count AS likeCount,
+    B.comment_count AS commentCount,
+    B.view_count AS viewCount,
+    B.writer_email AS writerEmail,
+    U.nickname AS writerNickname,
+    U.profile_image AS writerProfileImage
 FROM board AS B
-INNER JOIN `user` AS U
+INNER JOIN user AS U
 ON B.writer_email = U.email WHERE board_num = 1;
 SELECT image FROM image WHERE board_num = 1;
 

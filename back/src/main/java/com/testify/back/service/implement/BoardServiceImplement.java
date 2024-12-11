@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.testify.back.dto.request.board.PostBoardRequestDto;
 import com.testify.back.dto.response.ResponseDto;
+import com.testify.back.dto.response.board.GetBoardResponseDto;
 import com.testify.back.dto.response.board.PostBoardResponseDto;
 import com.testify.back.entity.BoardEntity;
 import com.testify.back.entity.ImageEntity;
 import com.testify.back.repository.BoardRepository;
 import com.testify.back.repository.ImageRepository;
 import com.testify.back.repository.UserRepository;
+import com.testify.back.repository.resultSet.GetBoardResultSet;
 import com.testify.back.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,35 @@ public class BoardServiceImplement implements BoardService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     
+
+    
+    @Override
+    public ResponseEntity<? super GetBoardResponseDto> getBoard(Integer boardNum) {
+
+        GetBoardResultSet resultSet = null;
+        List<ImageEntity> imageEntities = new ArrayList<>();
+    
+        try {
+            
+            resultSet = boardRepository.getBoard(boardNum);
+            if(resultSet == null) {
+                return GetBoardResponseDto.noExistBoard();
+            }
+            
+            imageEntities = imageRepository.findByBoardNum(boardNum);
+            
+            BoardEntity boardEntity = boardRepository.findByBoardNum(boardNum);
+            boardEntity.increaseViewCount();
+            boardRepository.save(boardEntity);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetBoardResponseDto.success(resultSet, imageEntities);
+    }
+
+
     @Override
     public ResponseEntity<? super PostBoardResponseDto> postBoard(PostBoardRequestDto dto, String email) {
 
@@ -55,4 +86,6 @@ public class BoardServiceImplement implements BoardService {
 
     return PostBoardResponseDto.success();
     }
+
+
 }
