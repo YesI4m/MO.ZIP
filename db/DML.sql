@@ -68,7 +68,7 @@ SELECT
 FROM heart AS H
 INNER JOIN user AS U
 ON H.user_email = U.email
-WHERE H.board_number = 1;
+WHERE H.board_num = 1;
 
 SELECT 
     U.nickname AS nickname,

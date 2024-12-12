@@ -2,6 +2,7 @@ package com.testify.back.entity;
 
 import com.testify.back.entity.primaryKey.HeartPk;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -20,5 +21,6 @@ public class HeartEntity {
     @Id
     private String userEmail;
     @Id
+    @Column(name = "board_num")
     private int boardNum;
 }

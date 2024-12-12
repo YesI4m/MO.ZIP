@@ -9,13 +9,18 @@ import org.springframework.stereotype.Service;
 import com.testify.back.dto.request.board.PostBoardRequestDto;
 import com.testify.back.dto.response.ResponseDto;
 import com.testify.back.dto.response.board.GetBoardResponseDto;
+import com.testify.back.dto.response.board.GetHeartListResponseDto;
 import com.testify.back.dto.response.board.PostBoardResponseDto;
+import com.testify.back.dto.response.board.PutHeartResponseDto;
 import com.testify.back.entity.BoardEntity;
+import com.testify.back.entity.HeartEntity;
 import com.testify.back.entity.ImageEntity;
 import com.testify.back.repository.BoardRepository;
+import com.testify.back.repository.HeartRepository;
 import com.testify.back.repository.ImageRepository;
 import com.testify.back.repository.UserRepository;
 import com.testify.back.repository.resultSet.GetBoardResultSet;
+import com.testify.back.repository.resultSet.GetHeartListResultSet;
 import com.testify.back.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +32,7 @@ public class BoardServiceImplement implements BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
+    private final HeartRepository heartRepository;
     
 
     
@@ -85,6 +91,58 @@ public class BoardServiceImplement implements BoardService {
         }
 
     return PostBoardResponseDto.success();
+    }
+
+
+    @Override
+    public ResponseEntity<? super PutHeartResponseDto> putHeart(Integer boardNum, String email) {
+
+        try {
+            boolean existedUser = userRepository.existsByEmail(email);
+            if(!existedUser) return PutHeartResponseDto.noExistUser();
+
+            BoardEntity boardEntity = boardRepository.findByBoardNum(boardNum);
+            if(boardEntity == null) return PutHeartResponseDto.noExistBoard();
+
+            HeartEntity heartEntity = heartRepository.findByBoardNumAndUserEmail(boardNum, email);
+            if(heartEntity == null){
+                heartEntity = new HeartEntity(email, boardNum);
+                heartRepository.save(heartEntity);
+                boardEntity.increaseHeartCount();
+            }
+            else{
+                heartRepository.delete(heartEntity);
+                boardEntity.decreaseHeartCount();
+            }
+
+            boardRepository.save(boardEntity);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    return PutHeartResponseDto.success();
+
+    }
+
+
+    @Override
+    public ResponseEntity<? super GetHeartListResponseDto> getHeartList(Integer boradNum) {
+
+        List<GetHeartListResultSet> resultSets = new ArrayList<>();
+
+        try {
+
+            boolean existedBoard = boardRepository.existsByBoardNum(boradNum);
+            if(!existedBoard) return GetHeartListResponseDto.noExistBoard();
+
+            resultSets = heartRepository.getHeartList(boradNum);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    return GetHeartListResponseDto.success(resultSets);
     }
 
 

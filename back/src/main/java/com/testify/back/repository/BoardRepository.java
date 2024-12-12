@@ -10,6 +10,8 @@ import com.testify.back.repository.resultSet.GetBoardResultSet;
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer>{
 
+    boolean existsByBoardNum(Integer boardNum);
+
     BoardEntity findByBoardNum(Integer boardNum);
 
     @Query(

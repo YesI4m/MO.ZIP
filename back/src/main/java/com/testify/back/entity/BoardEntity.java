@@ -50,4 +50,12 @@ public class BoardEntity {
     public void increaseViewCount(){
         this.viewCount++;
     }
+
+    public void increaseHeartCount(){
+        this.likeCount++;
+    }
+
+    public void decreaseHeartCount(){
+        this.likeCount--;
+    }
 }

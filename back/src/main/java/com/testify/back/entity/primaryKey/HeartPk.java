@@ -15,7 +15,7 @@ import lombok.Setter;
 public class HeartPk implements Serializable {
     @Column(name = "user_email")
     private String userEmail;
-    @Column(name = "board_number")
+    @Column(name = "board_num")
     private int boardNum;
     
 }

@@ -24,9 +24,6 @@ public class JwtProvider {
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.HOURS) );
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
-        System.out.println("Creating JWT for email: " + email);
-        System.out.println("JWT Expiry Date: " + expiredDate);
-
         String jwt = Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS256)
             .setSubject(email).setIssuedAt(new Date()).setExpiration(expiredDate)
@@ -40,14 +37,11 @@ public class JwtProvider {
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
         try{
-            System.out.println("Validating JWT: " + jwt);
             claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(jwt).getBody();
-            System.out.println("JWT is valid. Subject (email): " + claims.getSubject());
         } catch (Exception exception) {
-            System.out.println("Error validating JWT: " + exception.getMessage());
             exception.printStackTrace();
             return null;
         }
