@@ -7,19 +7,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.testify.back.dto.request.board.PostBoardRequestDto;
+import com.testify.back.dto.request.board.PostCommentRequestDto;
 import com.testify.back.dto.response.ResponseDto;
 import com.testify.back.dto.response.board.GetBoardResponseDto;
+import com.testify.back.dto.response.board.GetCommentListResponseDto;
 import com.testify.back.dto.response.board.GetHeartListResponseDto;
 import com.testify.back.dto.response.board.PostBoardResponseDto;
+import com.testify.back.dto.response.board.PostCommentResponseDto;
 import com.testify.back.dto.response.board.PutHeartResponseDto;
 import com.testify.back.entity.BoardEntity;
+import com.testify.back.entity.CommentEntity;
 import com.testify.back.entity.HeartEntity;
 import com.testify.back.entity.ImageEntity;
 import com.testify.back.repository.BoardRepository;
+import com.testify.back.repository.CommentRepository;
 import com.testify.back.repository.HeartRepository;
 import com.testify.back.repository.ImageRepository;
 import com.testify.back.repository.UserRepository;
 import com.testify.back.repository.resultSet.GetBoardResultSet;
+import com.testify.back.repository.resultSet.GetCommentListResultSet;
 import com.testify.back.repository.resultSet.GetHeartListResultSet;
 import com.testify.back.service.BoardService;
 
@@ -33,7 +39,7 @@ public class BoardServiceImplement implements BoardService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final HeartRepository heartRepository;
-    
+    private final CommentRepository commentRepository;
 
     
     @Override
@@ -143,6 +149,52 @@ public class BoardServiceImplement implements BoardService {
             return ResponseDto.databaseError();
         }
     return GetHeartListResponseDto.success(resultSets);
+    }
+
+
+    @Override
+    public ResponseEntity<? super PostCommentResponseDto> postComment(PostCommentRequestDto dto, Integer boardNum , String email) {
+
+        try {
+
+            BoardEntity boardEntity = boardRepository.findByBoardNum(boardNum);
+            if(boardEntity==null) return PostCommentResponseDto.noExistBoard();
+
+            boolean existedUser = userRepository.existsByEmail(email);
+            if(!existedUser) return PostCommentResponseDto.noExistUser();
+            
+            CommentEntity commentEntity = new CommentEntity(dto, boardNum, email);
+            commentRepository.save(commentEntity);
+
+            boardEntity.increaseCommentCount();
+            boardRepository.save(boardEntity);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    return PostCommentResponseDto.success();
+    }
+
+
+    @Override
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(Integer boardNum) {
+
+        List<GetCommentListResultSet> resultSets = new ArrayList<>();
+
+        try {
+            boolean existedBoard = boardRepository.existsByBoardNum(boardNum);
+            if(!existedBoard) return GetCommentListResponseDto.noExistBoard();
+
+            resultSets = commentRepository.getCommentList(boardNum);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    return GetCommentListResponseDto.success(resultSets);
     }
 
 

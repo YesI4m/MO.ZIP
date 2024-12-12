@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.testify.back.dto.request.board.PostBoardRequestDto;
+import com.testify.back.dto.request.board.PostCommentRequestDto;
 import com.testify.back.dto.response.board.GetBoardResponseDto;
+import com.testify.back.dto.response.board.GetCommentListResponseDto;
 import com.testify.back.dto.response.board.GetHeartListResponseDto;
 import com.testify.back.dto.response.board.PostBoardResponseDto;
+import com.testify.back.dto.response.board.PostCommentResponseDto;
 import com.testify.back.dto.response.board.PutHeartResponseDto;
+
 import com.testify.back.service.BoardService;
 
 import jakarta.validation.Valid;
@@ -42,6 +46,15 @@ public class BoardController {
         ResponseEntity<? super GetHeartListResponseDto> response = boardService.getHeartList(boardNum);
         return response;
     }
+
+    @GetMapping("/{boardNum}/comment-list")
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(
+        @PathVariable("boardNum") Integer boardNum
+    ){
+        ResponseEntity<? super GetCommentListResponseDto> response = boardService.getCommentList(boardNum);
+        return response;
+    }
+
     
     @PostMapping("")
     public ResponseEntity<? super PostBoardResponseDto> postBoard(
@@ -51,6 +64,17 @@ public class BoardController {
         ResponseEntity<? super PostBoardResponseDto> response = boardService.postBoard(requestBody, email);
         return response;
     }
+
+    @PostMapping("/{boardNum}/comment")
+    public ResponseEntity<? super PostCommentResponseDto> postComment(
+        @RequestBody @Valid PostCommentRequestDto requestBody,
+        @PathVariable("boardNum") Integer boardNum,
+        @AuthenticationPrincipal String email
+    ){
+        ResponseEntity<? super PostCommentResponseDto> response = boardService.postComment(requestBody, boardNum, email);
+        return response;
+    }
+
     
     @PutMapping("/{boardNum}/heart")
     public ResponseEntity<? super PutHeartResponseDto> putHeart(
