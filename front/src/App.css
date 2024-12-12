@@ -3,6 +3,10 @@
     border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+.emphasis{
+    font-weight: bolder;
+}
+
 .black-button{
     border-radius: 46px;
     width: 95px;
@@ -177,4 +181,28 @@ border-radius: 50% 50%;
 
 .close-icon{
     background-image: url(assets/image/close.png);
+}
+
+.more-icon{
+    background-image: url(assets/image/more.png);
+}
+
+.heart-fill-icon{
+    background-image: url(assets/image/favorite-fill.png);
+}
+
+.heart-light-icon{
+    background-image: url(assets/image/favorite-light.png);
+}
+
+.expand-up-light-icon{
+    background-image: url(assets/image/expand-up-light.png);
+}
+
+.expand-down-light-icon{
+    background-image: url(assets/image/expand-down-light.png);
+}
+
+.comment-icon{
+    background-image: url(assets/image/chat-light.png);
 }
