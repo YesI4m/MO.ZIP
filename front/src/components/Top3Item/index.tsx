@@ -13,7 +13,7 @@ export default function Top3Item({ top3ListItem }: Props) {
   
 //----------       properties       ----------//
   const { boardNum, title, content, boardTitleImage,
-    favoriteCount, viewCount, commentCount,
+    heartCount, viewCount, commentCount,
     writeDatetime, writerNickname, writerProfileImage } = top3ListItem;
 
 //---------- function  :  navigate  ----------//
@@ -42,7 +42,7 @@ const onClickhandler = () => {
           <div className='top3-list-item-content'>{content}</div>
         </div>
         <div className='top3-list-item-bottom'>
-          <div className='top3-list-item-counts'>{`댓글 ${favoriteCount} · 좋아요 ${commentCount} · 조회수 ${viewCount},`}</div>
+          <div className='top3-list-item-counts'>{`댓글 ${heartCount} · 좋아요 ${commentCount} · 조회수 ${viewCount},`}</div>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { ResponseDto } from './response';
 import { error } from 'console';
 import { GetSignInUserResponseDto } from './response/user';
 import { PostBoardRequestDto } from './request/board';
-import { GetBoardResponseDto, IncreaseViewCountResponseDto, postBoardResponseDto } from './response/board';
+import { GetBoardResponseDto, GetCommentListResponseDto, GetHeartListResponseDto, IncreaseViewCountResponseDto, postBoardResponseDto } from './response/board';
 
 const DOMAIN = "http://localhost:4000";
 
@@ -50,6 +50,8 @@ export const SignUpRequest = async(requestBody: SignUpRequestDto) => {
 
 const GET_BOARD_URL = (boardNum: number | string) => `${API_DOMAIN}/board/${boardNum}`;
 const INCREASE_VIEW_COUNT_URL = (boardNum: number|string) => `${API_DOMAIN}/board/${boardNum}/increase-view-count`;
+const GET_HEART_LIST_URL =  (boardNum: number|string) => `${API_DOMAIN}/board/${boardNum}/heart-list`;
+const GET_COMMENT_LIST_URL =  (boardNum: number|string) => `${API_DOMAIN}/board/${boardNum}/comment-list`;
 const POAST_BOARD_URL = () => `${API_DOMAIN}/board`;
 
 
@@ -83,6 +85,35 @@ export const increaseViewCountRequest = async(boardNum: number| string) => {
     return result;
 }
 
+
+export const getHeartListRequest = async(boardNum: number|string) =>{
+    const result = await axios.get(GET_HEART_LIST_URL(boardNum))
+        .then(response => {
+            const responseBody: GetHeartListResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+    return result;
+}
+
+export const GetCommentListRequest = async (boardNum: number | string) => {
+    const result = await axios.get(GET_COMMENT_LIST_URL(boardNum))
+        .then( response =>{
+            const responseBody : GetCommentListResponseDto = response.data;
+            return responseBody;
+
+        })
+        .catch(error => {
+            if(!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+    return result;
+}
 
 
 export const postBoardRequest = async(requestBody: PostBoardRequestDto, accessToken: string)=>{

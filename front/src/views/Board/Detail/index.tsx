@@ -1,17 +1,18 @@
 import CommentItem from 'components/CommentItem'
-import FavoriteItem from 'components/FavoriteItem'
+import HeartItem from 'components/HeartItem'
 import Pagination from 'components/Pagination/assets'
-import { boardMock, commentListMock, favoriteListMock } from 'mocks'
+import { commentListMock } from 'mocks'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Board, CommentListItem, FavoriteListItem } from 'types/interface'
+import { Board, CommentListItem, HeartListItem,  } from 'types/interface'
 import './style.css'
 import defaultProfileImage from 'assets/image/default-profile-image.png'
 import { useLoginUserStore } from 'stores'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BOARD_PATH, BOARD_UPDATE_PATH, MAIN_PATH, USER_PATH } from 'constant'
-import { getBoardRequest, increaseViewCountRequest } from 'apis'
+import { getBoardRequest, GetCommentListRequest, getHeartListRequest, increaseViewCountRequest } from 'apis'
 import { ResponseDto } from 'apis/response'
-import { GetBoardResponseDto, IncreaseViewCountResponseDto } from 'apis/response/board'
+import { GetBoardResponseDto, GetCommentListResponseDto, GetHeartListResponseDto, IncreaseViewCountResponseDto } from 'apis/response/board'
+import dayjs from 'dayjs'
 
 //          component: 게시물 Detail          //
 export default function BoardDetail() {
@@ -46,6 +47,13 @@ export default function BoardDetail() {
 
   //          state: 작성자 여부 상태          //
   const[isWriter, setWriter] =useState<boolean>(false);
+
+  //          function: 작성일 포멧 변경           //
+  const getWriteDatetimeFormat = () =>{
+    if(!board) return '';
+    const date = dayjs(board.writeDatetime);
+    return date.format('YYYY. MM. DD.');
+  }
 
   //          function: getBoardResponse 처리           //
   const getBoardResponse = (responseBody: GetBoardResponseDto | ResponseDto |null) => {
@@ -114,7 +122,7 @@ export default function BoardDetail() {
             <div className='board-detail-writer-profile-image' style={{backgroundImage:`url(${board?.writerProfileImage ? board.writerProfileImage : defaultProfileImage})`}}></div>
             <div className='board-detail-writer-nickname' onClick={onNicknameClickHandler}>{board?.writerNickname}</div>
             <div className='board-detail-info-divider'>{'|'}</div>
-            <div className='board-detail-write-date'>{board?.writeDatetime}</div>
+            <div className='board-detail-write-date'>{getWriteDatetimeFormat()}</div>
           </div>
           { isWriter &&
           <div className='icon-button' onClick={onMoreButtonClickHandler}>
@@ -149,26 +157,59 @@ export default function BoardDetail() {
 
 
   //          state: 좋아요 리스트 상태          //
-  const [favoirteList, setFavoiriteList] = useState<FavoriteListItem[]>([]);
+  const [heartList, setHeartList] = useState<HeartListItem[]>([]);
   //          state: 댓글 리스트 상태          //
   const [commentList, setCommentList] = useState<CommentListItem[]>([]);
   //          state: 좋아요 상태          //
-  const [isFavoirte, setFavoirite] = useState<boolean>(false);
+  const [isHeart, setHeart] = useState<boolean>(false);
   //          state: 댓글 상태          //
   const [comment, setComment] = useState<string>("");
   //          state: 좋아요 리스트 보기 상태          //
-  const [showFavoirte, setShowFavoirite] = useState<boolean>(false);
+  const [showHeart, setShowHeart] = useState<boolean>(false);
   //          state: 댓글 리스트 보기 상태          //
   const [showComment, setShowComment] = useState<boolean>(false);
 
+
+
+  //          function:getHeartListResponse 처리         //
+  const getHeartListResponse =(responseBody: GetHeartListResponseDto| ResponseDto |null) =>{
+    if(!responseBody) return;
+    const {code } = responseBody;
+    if(code === 'NB') alert('존재하지 않는 게시물입니다.');
+    if(code === 'DBE') alert('데이터베이스 오류입니다.');
+    if(code !== 'SU') return;
+
+    const { heartList } = responseBody as GetHeartListResponseDto;
+    setHeartList(heartList);
+    if(!loginUser) {
+      setHeart(false);
+      return;
+    }
+    const isHeart =heartList.findIndex(heart => heart.email === loginUser.email)!== -1;
+    setHeart(isHeart);
+  }
+
+  //          function:GetCommentListResponse 처리         //
+  const GetCommentListResponse = (responseBody : GetCommentListResponseDto | ResponseDto |null)=>{
+    if(!responseBody) return;
+    const {code } = responseBody;
+    if(code === 'NB') alert('존재하지 않는 게시물입니다.');
+    if(code === 'DBE') alert('데이터베이스 오류입니다.');
+    if(code !== 'SU') return;
+
+    const {commentList} = responseBody as GetCommentListResponseDto;
+    setCommentList(commentList);
+  }
+
+
   //          event handler:좋아요 클릭       //
-  const onFavoriteClickHandler = () =>{
-    setFavoirite(!isFavoirte)
+  const onHeartClickHandler = () =>{
+    setHeart(!isHeart)
   }
 
   //          event handler:좋아요 클릭       //
-  const onShowFavoriteClickHandler = () =>{
-    setShowFavoirite(!showFavoirte)
+  const onShowHeartClickHandler = () =>{
+    setShowHeart(!showHeart)
   }
 
   //          event handler:좋아요 클릭       //
@@ -193,8 +234,9 @@ export default function BoardDetail() {
 
   //          effect: 게시물 번호 변경시 댓글 좋아요 불러옴        //
     useEffect(()=> {
-      setFavoiriteList(favoriteListMock);
-      setCommentList(commentListMock);
+      if(!boardNum) return;
+      getHeartListRequest(boardNum).then(getHeartListResponse);
+      GetCommentListRequest(boardNum).then(GetCommentListResponse);
     },[boardNum]);
 
   //          render: 게시물 상세 화면 하단 렌더링         //
@@ -202,15 +244,15 @@ export default function BoardDetail() {
     <div id='board-detail-bottom'>
       <div className='board-detail-bottom-box'>
         <div className='board-detail-bottom-button-group'>
-          <div className='icon-button' onClick={onFavoriteClickHandler}>
-            { isFavoirte ? 
+          <div className='icon-button' onClick={onHeartClickHandler}>
+            { isHeart ? 
             <div className='icon heart-fill-icon'></div> :
             <div className='icon heart-light-icon'></div>
             }
           </div>
-          <div className='board-detail-bottom-button-text'>{`관심있어요 ${favoirteList.length}`}</div>
-          <div className='icon-button' onClick={onShowFavoriteClickHandler}>
-          { showFavoirte ?
+          <div className='board-detail-bottom-button-text'>{`관심있어요 ${heartList.length}`}</div>
+          <div className='icon-button' onClick={onShowHeartClickHandler}>
+          { showHeart ?
             <div className='icon expand-up-light-icon'></div> :
             <div className='icon expand-down-light-icon'></div>
           }
@@ -229,12 +271,12 @@ export default function BoardDetail() {
           </div>
         </div>
       </div>
-      { showFavoirte &&
+      { showHeart &&
       <div className='board-detail-bottom-heart-box'>
         <div className='board-detail-bottom-heart-container'>
-          <div className='board-detail-bottom-heart-title'>{'관심있어요 '}<span className='emphasis'>{commentList.length}</span></div>
+          <div className='board-detail-bottom-heart-title'>{'관심있어요 '}<span className='emphasis'>{heartList.length}</span></div>
           <div className='board-detail-bottom-heart-contents'>
-            {favoirteList.map(item => <FavoriteItem key={item.email} favoriteListItem={item} />)}
+            {heartList.map(item => <HeartItem key={item.email} heartListItem={item} />)}
           </div>
         </div>
       </div>
@@ -242,7 +284,7 @@ export default function BoardDetail() {
       { showComment &&
       <div className='board-detail-bottom-comment-box'>
         <div className='board-detail-bottom-comment-container'>
-          <div className='board-detail-bottom-comment-title'>{'댓글 '}<span className='emphasis'>{12}</span></div>
+          <div className='board-detail-bottom-comment-title'>{'댓글 '}<span className='emphasis'>{commentList.length}</span></div>
           <div className='board-detail-bottom-comment-list-container'>
             {commentList.map(item => <CommentItem key={item.nickname} commentListItem={item} />)}
           </div>
@@ -251,6 +293,7 @@ export default function BoardDetail() {
         <div className='board-detail-bottom-comment-pagination-box'>
           <Pagination />
         </div>
+        { loginUser !== null &&
         <div className='board-detail-bottom-comment-input-box'>
           <div className='board-detail-bottom-comment-input-container'>
             <textarea ref={commentRef} className='board-detail-bottom-comment-textarea' placeholder='댓글을 작성해주세요.' value={comment} onChange={onCommentChangeHandler} />
@@ -259,6 +302,7 @@ export default function BoardDetail() {
             </div>
           </div>
         </div>
+        }
       </div>
   }
     </div>

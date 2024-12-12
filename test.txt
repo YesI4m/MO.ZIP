@@ -12,9 +12,9 @@
         {commentListMock.map(commentListItem => <CommentItem commentListItem={commentListItem}/>)}
       </div> */}
 
-      {/* favoriteListItem테스트 */}
+      {/* heartListItem테스트 */}
       {/* <div style={{ display: 'flex',columnGap:'30px', gap: '20px'}}>
-        {favoriteListMock.map(favoriteListItem => <FavoriteItem favoriteListItem={favoriteListItem}/>)}
+        {heartListMock.map(heartListItem => <HeartItem heartListItem={heartListItem}/>)}
       </div> */}
 
       {/* 인풋박스테스트 */}

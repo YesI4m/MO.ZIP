@@ -12,7 +12,7 @@ public class BoardListItem {
     private String title;
     private String content;
     private String boardTitleImage;
-    private int favoriteCount;
+    private int heartCount;
     private int commentCount;
     private int viewCount;
     private String writeDatetime;

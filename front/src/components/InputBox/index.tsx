@@ -17,7 +17,7 @@ interface Props {
 
     onKeyDown? : (event: KeyboardEvent<HTMLInputElement>) => void;
 }
-//          component : FavoriteListItem                    //
+//          component : HeartListItem                    //
 const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
 
 //          state : properties                    //

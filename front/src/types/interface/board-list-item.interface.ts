@@ -3,7 +3,7 @@ export default interface BoardListItem {
     title : string;
     content : string;
     boardTitleImage : string | null;
-    favoriteCount : number;
+    heartCount : number;
     commentCount : number;
     viewCount : number;
     writeDatetime : string;

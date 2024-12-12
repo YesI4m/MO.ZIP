@@ -14,7 +14,7 @@ export default function BoardItem({ boardListItem }: Props) {
 
 //          state : properties                    //
 const {boardNum, title, content, boardTitleImage,
-    favoriteCount, viewCount, commentCount,
+    heartCount, viewCount, commentCount,
     writeDatetime, writerNickname, writerProfileImage} = boardListItem;
 
 //          function : navigate                    //
@@ -44,7 +44,7 @@ const onClickhandler = () => {
             </div>
             <div className='board-list-item-bottom'>
                 <div className='board-list-item-counts'>
-                    {`댓글 ${commentCount} · 좋아요 ${favoriteCount} · 조회수 ${viewCount}`}
+                    {`댓글 ${commentCount} · 좋아요 ${heartCount} · 조회수 ${viewCount}`}
                 </div>
             </div>
         </div>
