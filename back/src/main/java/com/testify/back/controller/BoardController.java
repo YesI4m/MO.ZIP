@@ -3,6 +3,7 @@ package com.testify.back.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +16,7 @@ import com.testify.back.dto.request.board.PostCommentRequestDto;
 import com.testify.back.dto.response.board.GetBoardResponseDto;
 import com.testify.back.dto.response.board.GetCommentListResponseDto;
 import com.testify.back.dto.response.board.GetHeartListResponseDto;
+import com.testify.back.dto.response.board.IncreaseViewCountResponseDto;
 import com.testify.back.dto.response.board.PostBoardResponseDto;
 import com.testify.back.dto.response.board.PostCommentResponseDto;
 import com.testify.back.dto.response.board.PutHeartResponseDto;
@@ -54,7 +56,14 @@ public class BoardController {
         ResponseEntity<? super GetCommentListResponseDto> response = boardService.getCommentList(boardNum);
         return response;
     }
-
+    
+    @GetMapping("/{boardNum}/increase-view-count")
+    public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(
+        @PathVariable("boardNum") Integer boardNum
+    ){
+        ResponseEntity<? super IncreaseViewCountResponseDto> response = boardService.increaseViewCount(boardNum);
+        return response;
+    }
     
     @PostMapping("")
     public ResponseEntity<? super PostBoardResponseDto> postBoard(
@@ -84,5 +93,7 @@ public class BoardController {
         ResponseEntity<? super PutHeartResponseDto> response = boardService.putHeart(boardNum, email);
         return response;
     }
+
+
 
 }

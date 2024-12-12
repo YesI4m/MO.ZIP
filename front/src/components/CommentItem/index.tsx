@@ -24,7 +24,7 @@ const {nickname, profileImage, writeDatetime, content} = commentListItem
             <div className='comment-list-item-divider'>{'\|'}</div>
             <div className='comment-list-item-time'>{writeDatetime}</div>
         </div>
-        <div className='comment-list-item-main'>{content}</div>
+        <div className='comment-list-item-content'>{content}</div>
     </div>
   )
 }

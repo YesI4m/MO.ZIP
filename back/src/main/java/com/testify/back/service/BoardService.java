@@ -7,6 +7,7 @@ import com.testify.back.dto.request.board.PostCommentRequestDto;
 import com.testify.back.dto.response.board.GetBoardResponseDto;
 import com.testify.back.dto.response.board.GetCommentListResponseDto;
 import com.testify.back.dto.response.board.GetHeartListResponseDto;
+import com.testify.back.dto.response.board.IncreaseViewCountResponseDto;
 import com.testify.back.dto.response.board.PostBoardResponseDto;
 import com.testify.back.dto.response.board.PostCommentResponseDto;
 import com.testify.back.dto.response.board.PutHeartResponseDto;
@@ -24,5 +25,7 @@ public interface BoardService {
     ResponseEntity<? super PostCommentResponseDto> postComment(PostCommentRequestDto dto,Integer boardNum, String email);
 
     ResponseEntity<? super PutHeartResponseDto> putHeart(Integer boardNum, String email);
+
+    ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNum);
     
 }

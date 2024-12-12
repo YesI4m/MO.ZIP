@@ -12,6 +12,7 @@ import com.testify.back.dto.response.ResponseDto;
 import com.testify.back.dto.response.board.GetBoardResponseDto;
 import com.testify.back.dto.response.board.GetCommentListResponseDto;
 import com.testify.back.dto.response.board.GetHeartListResponseDto;
+import com.testify.back.dto.response.board.IncreaseViewCountResponseDto;
 import com.testify.back.dto.response.board.PostBoardResponseDto;
 import com.testify.back.dto.response.board.PostCommentResponseDto;
 import com.testify.back.dto.response.board.PutHeartResponseDto;
@@ -56,11 +57,7 @@ public class BoardServiceImplement implements BoardService {
             }
             
             imageEntities = imageRepository.findByBoardNum(boardNum);
-            
-            BoardEntity boardEntity = boardRepository.findByBoardNum(boardNum);
-            boardEntity.increaseViewCount();
-            boardRepository.save(boardEntity);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
@@ -195,6 +192,23 @@ public class BoardServiceImplement implements BoardService {
             return ResponseDto.databaseError();
         }
     return GetCommentListResponseDto.success(resultSets);
+    }
+
+
+    @Override
+    public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNum) {
+
+        try {
+            BoardEntity boardEntity = boardRepository.findByBoardNum(boardNum);
+            if(boardEntity == null) return IncreaseViewCountResponseDto.noExistBoard();
+            boardEntity.increaseViewCount();
+            boardRepository.save(boardEntity);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+    return IncreaseViewCountResponseDto.success();
     }
 
 

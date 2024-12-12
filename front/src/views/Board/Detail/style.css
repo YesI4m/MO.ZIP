@@ -52,8 +52,8 @@
     width: 32px;
 
     border-radius: 32px;
-    background-position: 50% 50%;
     background-image: 100% 100%;
+    background-position: 50% 50%;
     
 }
 
@@ -123,7 +123,7 @@
     justify-content: center;
 
     color: rgba(255, 0, 0, 0.5);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     line-height: 140%;
 }
