@@ -18,7 +18,7 @@
 - DB - MySQL
 백엔드 API 작업 중 POSTMAN 사용
 
-<img width="540" height="470" alt="Image" src="https://github.com/user-attachments/assets/a3c794db-63db-433b-8cba-7a0e24162c4d" />
+<img width="790" height="100" alt="Image" src="https://github.com/user-attachments/assets/fb80e41d-a696-4852-8337-27b5a2e96ff1" />
 
 ## 주요 기능
 
